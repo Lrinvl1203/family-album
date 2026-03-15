@@ -346,6 +346,30 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .card-dl:hover{background:rgba(128,128,128,.3)}
 [data-theme="heritage"] .card-dl{border-radius:2px}
 
+/* ── 처리 중 카드 ── */
+.media-card.processing{cursor:default;opacity:.75}
+.media-card.processing:hover{transform:none !important;box-shadow:none !important}
+.processing-overlay{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.55);backdrop-filter:blur(2px);
+  gap:10px;padding:12px;
+}
+[data-theme="heritage"] .processing-overlay{background:rgba(253,251,240,.82)}
+.processing-badge{
+  font-size:12px;color:#fff;background:rgba(0,0,0,.5);
+  padding:4px 10px;border-radius:20px;
+}
+[data-theme="heritage"] .processing-badge{color:var(--text);background:rgba(0,0,0,.12)}
+.processing-link{
+  font-size:12px;color:var(--accent);
+  background:rgba(0,0,0,.4);border:1px solid var(--accent);
+  padding:5px 12px;border-radius:8px;text-decoration:none;
+  transition:background .2s;white-space:nowrap;
+}
+.processing-link:hover{background:rgba(0,0,0,.6)}
+[data-theme="heritage"] .processing-link{background:rgba(212,175,55,.1);border-color:var(--accent)}
+
 /* 빈 상태 */
 .empty{
   grid-column:1/-1;text-align:center;
@@ -455,7 +479,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
   <header class="app-header">
     <button class="back-btn" id="back-btn" onclick="showAlbumList()">‹</button>
     <div class="header-title" id="header-title">우리 가족 앨범</div>
-    <span class="header-count" id="header-count">2개</span>
+    <span class="header-count" id="header-count">3개</span>
     <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">📖 빈티지</button>
     <button class="logout-btn" onclick="logout()">나가기</button>
   </header>
@@ -479,7 +503,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 
 <script>
 const HASH = "7ac25d5d84cae3dcc037c52a93dfe320fe83b2a6abe787451b4fc15aeba2c9e7";
-const DATA = {"type": "flat", "media": [{"id": "1i3Z-nb2qISGs09vc2prFAcR3hAIztx6d", "name": "사업성평가_skill.mp4", "type": "video", "date": "2026-03-15"}, {"id": "12huYQaXBimaeUMiN0ZWokwPc7_GOk7FW", "name": "수유계산기.mp4", "type": "video", "date": "2026-03-15"}]};
+const DATA = {"type": "flat", "media": [{"id": "18vRmt-yxDM6W7A43DoExo1dUSQHPhodf", "name": "풍수지리 - Clipchamp 제작_1772898433035.mp4", "type": "video", "date": "2026-03-07", "status": "ok"}, {"id": "1i3Z-nb2qISGs09vc2prFAcR3hAIztx6d", "name": "사업성평가_skill.mp4", "type": "video", "date": "2026-03-15", "status": "processing"}, {"id": "12huYQaXBimaeUMiN0ZWokwPc7_GOk7FW", "name": "수유계산기.mp4", "type": "video", "date": "2026-03-15", "status": "ok"}]};
 let currentAlbumMedia = [];
 let lbIndex = 0;
 let touchStartX = 0;
@@ -644,6 +668,29 @@ function showGallery(media,name){
 function mediaCard(m,i){
   const thumb=`https://drive.google.com/thumbnail?id=${m.id}&sz=w800`;
   const dlUrl=`https://drive.google.com/uc?export=download&id=${m.id}`;
+  const driveUrl=`https://drive.google.com/file/d/${m.id}/view`;
+
+  // 처리 중 카드
+  if(m.status==='processing'){
+    return `
+      <div class="media-card processing fade-in">
+        <img src="${thumb}" loading="lazy" class="loading"
+             onload="this.classList.remove('loading')"
+             onerror="this.style.opacity='0'">
+        <div class="processing-overlay">
+          <div class="processing-badge">⏳ Drive 처리 중</div>
+          <a class="processing-link" href="${driveUrl}" target="_blank"
+             onclick="event.stopPropagation()">Drive에서 직접 보기 →</a>
+        </div>
+        <div class="card-hover-info">
+          <div class="card-meta">
+            <div class="card-name">${m.name}</div>
+            <div class="card-date">${m.date}</div>
+          </div>
+        </div>
+      </div>`;
+  }
+
   const badge=m.type==='video'?'<span class="video-badge">🎬</span>':'';
   const overlay=m.type==='video'?'<div class="play-overlay"><div class="play-icon">▶</div></div>':'';
   return `
@@ -666,6 +713,7 @@ function mediaCard(m,i){
 // ── 라이트박스 ────────────────────────────────────────────────────────
 
 function openLb(i){
+  if(currentAlbumMedia[i]?.status==='processing') return;
   lbIndex=i;
   renderLb();
   document.getElementById('lightbox').classList.add('open');
