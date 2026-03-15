@@ -1,54 +1,104 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="theme-color" content="#100e0c">
 <title>우리 가족 앨범</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
-:root{
-  --bg:#100e0c;
-  --surface:#1e1a16;
-  --surface2:#2a2420;
-  --border:#3a3028;
-  --accent:#d4956a;
-  --accent2:#e8b48a;
-  --text:#f5f0ea;
-  --muted:#9a8f84;
-  --radius:14px;
+/* ════════════════════════════════════
+   DARK THEME (기본)
+════════════════════════════════════ */
+[data-theme="dark"]{
+  --bg:#100e0c;--surface:#1e1a16;--surface2:#2a2420;
+  --border:#3a3028;--accent:#d4956a;--text:#f5f0ea;--muted:#9a8f84;
+  --lock-bg:radial-gradient(ellipse at 30% 40%,#2a1f15 0%,#100e0c 60%,#0a1018 100%);
+  --lock-card:#1e1a16;--lock-input:#100e0c;
+  --header-bg:rgba(16,14,12,.88);
+  --card-bg:#2a2420;--card-radius:10px;
 }
 
-body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;overscroll-behavior:none}
+/* ════════════════════════════════════
+   HERITAGE THEME (Modern Heritage)
+════════════════════════════════════ */
+[data-theme="heritage"]{
+  --bg:#ede7d3;--surface:#fdfbf0;--surface2:#f5f0e0;
+  --border:#c8bc9a;--accent:#d4af37;--text:#3e2723;--muted:#757575;
+  --lock-bg:#3e2723;
+  --lock-card:#fdfbf0;--lock-input:#f5f0e0;
+  --header-bg:rgba(253,251,240,.92);
+  --card-bg:#fff;--card-radius:2px;
+}
+
+/* 종이 결 오버레이 (heritage) */
+[data-theme="heritage"] body::after{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:999;
+  opacity:.035;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:200px;
+}
+
+/* 가죽 잠금 화면 결 (heritage) */
+[data-theme="heritage"] #lock::before{
+  content:'';position:absolute;inset:0;pointer-events:none;
+  background:repeating-linear-gradient(45deg,transparent,transparent 3px,rgba(255,255,255,.018) 3px,rgba(255,255,255,.018) 6px);
+}
+
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;overscroll-behavior:none;transition:background .4s,color .4s}
 
 /* ── 잠금화면 ── */
 #lock{
   position:fixed;inset:0;
-  background:radial-gradient(ellipse at 30% 40%,#2a1f15 0%,#100e0c 60%,#0a1018 100%);
+  background:var(--lock-bg);
   display:flex;align-items:center;justify-content:center;z-index:100;
+  position:relative;
 }
 
-.lock-wrap{width:100%;max-width:340px;padding:0 24px;text-align:center}
+.lock-wrap{width:100%;max-width:340px;padding:0 24px;text-align:center;position:relative;z-index:1}
 
 .lock-icon{
   width:80px;height:80px;border-radius:20px;
   background:linear-gradient(135deg,var(--accent),#8b5e3c);
   display:inline-flex;align-items:center;justify-content:center;
   font-size:36px;margin-bottom:24px;
-  box-shadow:0 8px 32px rgba(212,149,106,.3);
+  box-shadow:0 8px 32px rgba(0,0,0,.3);
 }
 
-.lock-title{font-size:26px;font-weight:700;letter-spacing:-.5px;margin-bottom:6px}
-.lock-sub{font-size:14px;color:var(--muted);margin-bottom:36px}
+[data-theme="heritage"] .lock-icon{
+  border-radius:4px;
+  box-shadow:0 0 0 3px var(--accent),4px 4px 20px rgba(0,0,0,.4);
+}
+
+.lock-card{
+  background:var(--lock-card);
+  border-radius:16px;
+  padding:36px 32px;
+  box-shadow:0 20px 60px rgba(0,0,0,.4);
+}
+
+[data-theme="heritage"] .lock-card{
+  border-radius:4px;
+  border:1px solid #c8bc9a;
+  box-shadow:4px 4px 0 #b8960e,6px 6px 20px rgba(0,0,0,.3);
+}
+
+.lock-title{font-size:26px;font-weight:700;letter-spacing:-.5px;margin-bottom:6px;color:var(--text)}
+.lock-sub{font-size:14px;color:var(--muted);margin-bottom:32px}
+
+[data-theme="heritage"] .lock-title{font-family:'Nanum Pen Script',cursive;font-size:30px}
 
 .pw-wrap{position:relative;margin-bottom:12px}
 .pw-input{
   width:100%;padding:15px 48px 15px 16px;
-  background:var(--surface);border:1.5px solid var(--border);
+  background:var(--lock-input);border:1.5px solid var(--border);
   border-radius:12px;color:var(--text);font-size:16px;outline:none;
   transition:border-color .2s;
 }
+[data-theme="heritage"] .pw-input{border-radius:4px}
 .pw-input:focus{border-color:var(--accent)}
 .pw-input.shake{animation:shake .35s}
 .pw-eye{
@@ -61,14 +111,16 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 
 .pw-btn{
   width:100%;padding:15px;
-  background:linear-gradient(135deg,var(--accent),#c07840);
+  background:linear-gradient(135deg,var(--accent),#b8920a);
   border:none;border-radius:12px;
   color:#fff;font-size:16px;font-weight:700;cursor:pointer;
   transition:opacity .2s,transform .1s;letter-spacing:.3px;
 }
+[data-theme="dark"] .pw-btn{background:linear-gradient(135deg,#d4956a,#c07840);color:#fff}
+[data-theme="heritage"] .pw-btn{color:#3e2723;border-radius:4px}
 .pw-btn:hover{opacity:.9}
 .pw-btn:active{transform:scale(.98)}
-.pw-error{font-size:13px;color:#e06060;margin-top:10px;min-height:18px}
+.pw-error{font-size:13px;color:#c0392b;margin-top:10px;min-height:18px}
 
 /* ── 앱 ── */
 #app{display:none}
@@ -76,11 +128,14 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 /* ── 헤더 ── */
 .app-header{
   position:sticky;top:0;
-  background:rgba(16,14,12,.88);backdrop-filter:blur(16px);
+  background:var(--header-bg);backdrop-filter:blur(16px);
   border-bottom:1px solid var(--border);
   padding:0 20px;height:60px;
-  display:flex;align-items:center;gap:12px;z-index:20;
+  display:flex;align-items:center;gap:10px;z-index:20;
+  transition:background .4s,border-color .4s;
 }
+
+[data-theme="heritage"] .app-header{box-shadow:0 2px 8px rgba(0,0,0,.08)}
 
 .back-btn{
   background:none;border:none;color:var(--text);
@@ -89,11 +144,20 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 }
 
 .header-title{font-size:18px;font-weight:700;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+[data-theme="heritage"] .header-title{font-family:'Nanum Pen Script',cursive;font-size:22px}
 .header-count{font-size:12px;color:var(--muted);background:var(--surface2);padding:3px 10px;border-radius:20px;white-space:nowrap}
+
+/* 테마 전환 버튼 */
+.theme-btn{
+  background:none;border:1px solid var(--border);color:var(--muted);
+  padding:5px 10px;border-radius:8px;cursor:pointer;font-size:13px;
+  transition:all .2s;white-space:nowrap;
+}
+.theme-btn:hover{border-color:var(--accent);color:var(--accent)}
 
 .logout-btn{
   background:none;border:1px solid var(--border);color:var(--muted);
-  padding:6px 14px;border-radius:8px;cursor:pointer;font-size:13px;
+  padding:5px 12px;border-radius:8px;cursor:pointer;font-size:13px;
   transition:all .2s;white-space:nowrap;
 }
 .logout-btn:hover{border-color:var(--accent);color:var(--accent)}
@@ -103,6 +167,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 
 .section-intro{margin-bottom:28px}
 .section-intro h2{font-size:22px;font-weight:700;margin-bottom:4px}
+[data-theme="heritage"] .section-intro h2{font-family:'Nanum Pen Script',cursive;font-size:28px}
 .section-intro p{font-size:14px;color:var(--muted)}
 
 .albums-grid{
@@ -112,12 +177,21 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 }
 
 .album-card{
-  border-radius:var(--radius);overflow:hidden;cursor:pointer;
+  border-radius:14px;overflow:visible;cursor:pointer;
   background:var(--surface);
   transition:transform .25s,box-shadow .25s;
   position:relative;
 }
-.album-card:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,.5)}
+.album-card:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,.3)}
+
+/* Heritage 앨범 카드: 금박 모서리 장식 */
+[data-theme="heritage"] .album-card{
+  border-radius:4px;
+  border:1px solid var(--border);
+  box-shadow:3px 3px 0 var(--accent),5px 5px 16px rgba(0,0,0,.15);
+  overflow:hidden;
+}
+[data-theme="heritage"] .album-card:hover{transform:translateY(-3px) rotate(.5deg);box-shadow:5px 5px 0 var(--accent),8px 8px 20px rgba(0,0,0,.2)}
 
 .album-cover{
   aspect-ratio:1;overflow:hidden;position:relative;
@@ -139,34 +213,79 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 /* 사진 1장인 경우 */
 .album-cover-grid.single{grid-template-columns:1fr;grid-template-rows:1fr}
 
-.album-info{padding:14px 14px 16px}
+.album-info{padding:14px 14px 16px;background:var(--surface)}
 .album-name{font-size:15px;font-weight:600;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+[data-theme="heritage"] .album-name{font-family:'Nanum Pen Script',cursive;font-size:18px}
 .album-meta{font-size:12px;color:var(--muted);display:flex;gap:10px}
 
 /* ── 갤러리 뷰 ── */
 #gallery-view{display:none;padding:20px}
 
-.gallery-grid{
+/* ─ DARK: 타이트한 그리드 ─ */
+[data-theme="dark"] .gallery-grid{
   display:grid;
   grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
   gap:8px;
 }
+[data-theme="dark"] .media-card:nth-child(7n+1){grid-column:span 2;grid-row:span 2}
 
-/* 매 7번째 아이템 크게 */
-.media-card:nth-child(7n+1){grid-column:span 2;grid-row:span 2}
+/* ─ HERITAGE: 폴라로이드 그리드 ─ */
+[data-theme="heritage"] .gallery-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+  gap:28px;
+  padding:12px 4px 40px;
+  background:
+    linear-gradient(rgba(0,0,0,.04) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,0,0,.04) 1px,transparent 1px);
+  background-size:32px 32px;
+  background-color:var(--bg);
+}
+
+/* 폴라로이드 회전 패턴 */
+[data-theme="heritage"] .media-card:nth-child(6n+1){transform:rotate(-2deg)}
+[data-theme="heritage"] .media-card:nth-child(6n+2){transform:rotate(1.5deg)}
+[data-theme="heritage"] .media-card:nth-child(6n+3){transform:rotate(-1deg)}
+[data-theme="heritage"] .media-card:nth-child(6n+4){transform:rotate(2.5deg)}
+[data-theme="heritage"] .media-card:nth-child(6n+5){transform:rotate(-1.8deg)}
+[data-theme="heritage"] .media-card:nth-child(6n+6){transform:rotate(.8deg)}
+[data-theme="heritage"] .media-card:hover{transform:rotate(0) scale(1.06) !important;z-index:10}
 
 .media-card{
-  position:relative;border-radius:10px;overflow:hidden;
-  cursor:pointer;background:var(--surface2);
+  position:relative;border-radius:var(--card-radius);overflow:hidden;
+  cursor:pointer;background:var(--card-bg);
   aspect-ratio:1;
-  transition:transform .2s,box-shadow .2s;
+  transition:transform .25s,box-shadow .25s;
 }
-.media-card:hover{transform:scale(1.02);box-shadow:0 8px 24px rgba(0,0,0,.4)}
+
+[data-theme="dark"] .media-card:hover{transform:scale(1.02);box-shadow:0 8px 24px rgba(0,0,0,.4)}
+
+/* 폴라로이드 스타일 */
+[data-theme="heritage"] .media-card{
+  aspect-ratio:auto;
+  padding:10px 10px 48px;
+  box-shadow:2px 4px 12px rgba(0,0,0,.22);
+  overflow:visible;
+}
+
+[data-theme="heritage"] .media-card:hover{
+  box-shadow:6px 8px 24px rgba(0,0,0,.3);
+}
+
+/* 광택 오버레이 (heritage hover) */
+[data-theme="heritage"] .media-card::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(255,255,255,.35) 0%,transparent 55%);
+  pointer-events:none;opacity:0;transition:opacity .3s;border-radius:2px;
+}
+[data-theme="heritage"] .media-card:hover::after{opacity:1}
 
 .media-card img{
-  width:100%;height:100%;object-fit:cover;
+  width:100%;object-fit:cover;
   transition:opacity .3s;display:block;
 }
+[data-theme="dark"] .media-card img{height:100%}
+[data-theme="heritage"] .media-card img{height:180px;border-radius:1px}
 .media-card img.loading{opacity:0}
 
 .video-badge{
@@ -175,12 +294,14 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
   font-size:11px;padding:3px 8px;border-radius:6px;
   backdrop-filter:blur(4px);
 }
+[data-theme="heritage"] .video-badge{top:14px;right:14px;background:rgba(62,39,35,.7);border-radius:2px}
 
 .play-overlay{
   position:absolute;inset:0;
   display:flex;align-items:center;justify-content:center;
   background:rgba(0,0,0,.15);transition:background .2s;
 }
+[data-theme="heritage"] .play-overlay{inset:10px 10px 48px;background:rgba(0,0,0,.1)}
 .media-card:hover .play-overlay{background:rgba(0,0,0,.05)}
 
 .play-icon{
@@ -190,26 +311,40 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
   font-size:16px;padding-left:2px;
 }
 
-.card-hover-info{
+/* Dark: 호버시 나타나는 오버레이 */
+[data-theme="dark"] .card-hover-info{
   position:absolute;bottom:0;left:0;right:0;
   padding:8px 10px 10px;
   background:linear-gradient(transparent,rgba(0,0,0,.75));
   opacity:0;transition:opacity .2s;
   display:flex;align-items:flex-end;justify-content:space-between;
 }
-.media-card:hover .card-hover-info{opacity:1}
+[data-theme="dark"] .media-card:hover .card-hover-info{opacity:1}
+
+/* Heritage: 항상 보이는 폴라로이드 캡션 */
+[data-theme="heritage"] .card-hover-info{
+  position:absolute;bottom:0;left:0;right:0;
+  height:48px;padding:6px 10px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--card-bg);
+  opacity:1;
+}
+
 .card-meta{flex:1;min-width:0}
-.card-name{font-size:11px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.card-date{font-size:10px;color:rgba(255,255,255,.6);margin-top:1px}
+[data-theme="dark"] .card-name{font-size:11px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+[data-theme="dark"] .card-date{font-size:10px;color:rgba(255,255,255,.6);margin-top:1px}
+[data-theme="heritage"] .card-name{font-family:'Nanum Pen Script',cursive;font-size:14px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+[data-theme="heritage"] .card-date{font-size:11px;color:var(--muted);margin-top:1px}
 
 .card-dl{
   width:28px;height:28px;border-radius:7px;
-  background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.25);
-  color:#fff;display:flex;align-items:center;justify-content:center;
+  background:rgba(128,128,128,.15);border:1px solid rgba(128,128,128,.2);
+  color:var(--muted);display:flex;align-items:center;justify-content:center;
   font-size:13px;cursor:pointer;text-decoration:none;
   flex-shrink:0;margin-left:6px;transition:background .2s;
 }
-.card-dl:hover{background:rgba(255,255,255,.32)}
+.card-dl:hover{background:rgba(128,128,128,.3)}
+[data-theme="heritage"] .card-dl{border-radius:2px}
 
 /* 빈 상태 */
 .empty{
@@ -300,16 +435,18 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 <div id="lock">
   <div class="lock-wrap">
     <div class="lock-icon">📷</div>
-    <div class="lock-title">우리 가족 앨범</div>
-    <div class="lock-sub">가족만 볼 수 있는 소중한 순간들</div>
-    <div class="pw-wrap">
-      <input type="password" class="pw-input" id="pw-input" placeholder="비밀번호"
-             autocomplete="current-password"
-             onkeydown="if(event.key==='Enter')checkPw()">
-      <button class="pw-eye" onclick="toggleEye()" id="pw-eye">👁</button>
+    <div class="lock-card">
+      <div class="lock-title">우리 가족 앨범</div>
+      <div class="lock-sub">가족만 볼 수 있는 소중한 순간들</div>
+      <div class="pw-wrap">
+        <input type="password" class="pw-input" id="pw-input" placeholder="비밀번호"
+               autocomplete="current-password"
+               onkeydown="if(event.key==='Enter')checkPw()">
+        <button class="pw-eye" onclick="toggleEye()" id="pw-eye">👁</button>
+      </div>
+      <button class="pw-btn" onclick="checkPw()">앨범 열기</button>
+      <div class="pw-error" id="pw-error"></div>
     </div>
-    <button class="pw-btn" onclick="checkPw()">앨범 열기</button>
-    <div class="pw-error" id="pw-error"></div>
   </div>
 </div>
 
@@ -319,6 +456,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
     <button class="back-btn" id="back-btn" onclick="showAlbumList()">‹</button>
     <div class="header-title" id="header-title">우리 가족 앨범</div>
     <span class="header-count" id="header-count">2개</span>
+    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()">📖 빈티지</button>
     <button class="logout-btn" onclick="logout()">나가기</button>
   </header>
 
@@ -345,6 +483,25 @@ const DATA = {"type": "flat", "media": [{"id": "1i3Z-nb2qISGs09vc2prFAcR3hAIztx6
 let currentAlbumMedia = [];
 let lbIndex = 0;
 let touchStartX = 0;
+
+// ── 테마 ──────────────────────────────────────────────────────────────
+
+function applyTheme(theme){
+  document.documentElement.dataset.theme = theme;
+  localStorage.setItem('album_theme', theme);
+  const btn = document.getElementById('theme-btn');
+  if(btn) btn.textContent = theme==='dark' ? '📖 빈티지' : '🌙 다크';
+}
+
+function toggleTheme(){
+  const cur = document.documentElement.dataset.theme;
+  applyTheme(cur==='dark' ? 'heritage' : 'dark');
+  // 테마 전환 후 광택 리스너 재설정
+  setupShineEffect();
+}
+
+// 저장된 테마 복원
+applyTheme(localStorage.getItem('album_theme') || 'dark');
 
 // ── 인증 ──────────────────────────────────────────────────────────────
 
@@ -580,6 +737,20 @@ function setupObserver(){
     entries.forEach(el=>{if(el.isIntersecting)el.target.classList.add('visible')});
   },{threshold:.08});
   document.querySelectorAll('.fade-in:not(.visible)').forEach(el=>obs.observe(el));
+  setupShineEffect();
+}
+
+// ── Heritage 광택 효과 ────────────────────────────────────────────────
+
+function setupShineEffect(){
+  if(document.documentElement.dataset.theme!=='heritage')return;
+  document.querySelectorAll('.media-card').forEach(card=>{
+    card.addEventListener('mousemove',e=>{
+      const r=card.getBoundingClientRect();
+      card.style.setProperty('--mx',((e.clientX-r.left)/r.width*100).toFixed(1)+'%');
+      card.style.setProperty('--my',((e.clientY-r.top)/r.height*100).toFixed(1)+'%');
+    });
+  });
 }
 </script>
 </body>
