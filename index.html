@@ -430,7 +430,7 @@ function renderGallery() {
   }
 
   gallery.innerHTML = MEDIA.map((m, i) => {
-    const thumb = `https://drive.google.com/thumbnail?id=${m.id}&sz=w400`;
+    const thumb = `https://drive.google.com/thumbnail?id=${m.id}&sz=w800`;
     if (m.type === 'image') {
       return `<div class="media-card" onclick="openLightbox(${i})">
         <img src="${thumb}" alt="${m.name}" class="loading"
